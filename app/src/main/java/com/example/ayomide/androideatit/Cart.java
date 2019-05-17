@@ -95,7 +95,7 @@ public class Cart extends AppCompatActivity {
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
 
-        alertDialog.setPositiveButton( "YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //create new Request
