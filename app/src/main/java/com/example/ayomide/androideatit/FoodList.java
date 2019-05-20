@@ -33,12 +33,10 @@ public class FoodList extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
 
     DatabaseReference foodList;
+    FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter, searchAdapter;
 
     String categoryId = "";
 
-    FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter;
-
-    FirebaseRecyclerAdapter<Food, FoodViewHolder> searchAdapter;
     List<String> suggestList = new ArrayList<>();
     MaterialSearchBar materialSearchBar;
 
@@ -124,7 +122,7 @@ public class FoodList extends AppCompatActivity {
                 Food.class,
                 R.layout.food_item,
                 FoodViewHolder.class,
-                foodList.orderByChild("Name").equalTo(text.toString()) //Compare name
+                foodList.orderByChild("name").equalTo(text.toString()) //Compare name
         ) {
             @Override
             protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
@@ -132,12 +130,12 @@ public class FoodList extends AppCompatActivity {
                 viewHolder.food_name.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.food_image);
 
-                final Food local = model;
+
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
                         Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
-                        foodDetail.putExtra("FoodId", searchAdapter.getRef(position).getKey()); //Send Food Id to new activity
+                        foodDetail.putExtra("foodId", searchAdapter.getRef(position).getKey()); //Send Food Id to new activity
                         startActivity(foodDetail);
                     }
                 });
@@ -153,7 +151,8 @@ public class FoodList extends AppCompatActivity {
         //Like: Select * from Foods where MenuId
         adapter =  new FirebaseRecyclerAdapter<Food, FoodViewHolder>(Food.class,
                 R.layout.food_item,
-                FoodViewHolder.class, foodList.orderByChild("MenuId").equalTo(categoryId) // like : Select * from Foods where MenuId = CategoryId
+                FoodViewHolder.class,
+                foodList.orderByChild("menuId").equalTo(categoryId) // like : Select * from Foods where MenuId = CategoryId
         ) {
             @Override
             protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
@@ -166,7 +165,7 @@ public class FoodList extends AppCompatActivity {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
                         Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
-                        foodDetail.putExtra("FoodId", adapter.getRef(position).getKey()); //Send Food Id to new activity
+                        foodDetail.putExtra("foodId", adapter.getRef(position).getKey()); //Send Food Id to new activity
                         startActivity(foodDetail);
                     }
                 });
@@ -179,7 +178,7 @@ public class FoodList extends AppCompatActivity {
 
 
     private void loadSuggest() {
-        foodList.orderByChild("MenuId").equalTo(categoryId)
+        foodList.orderByChild("menuId").equalTo(categoryId)
                 .addValueEventListener( new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
