@@ -4,8 +4,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.example.ayomide.androideatit.Common.Common;
+import com.example.ayomide.androideatit.Interface.ItemClickListener;
 import com.example.ayomide.androideatit.Model.Request;
 import com.example.ayomide.androideatit.ViewHolder.OrderViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -47,24 +49,22 @@ public class OrderStatus extends AppCompatActivity {
             @Override
             protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
             viewHolder.tvOrderId.setText(adapter.getRef(position).getKey());
-            viewHolder.tvOrderStatus.setText(convertCodeToStatus(model.getStatus()));
+            viewHolder.tvOrderStatus.setText(Common.convertCodeToStatus(model.getStatus()));
             viewHolder.tvOrderPhone.setText(model.getPhone());
             viewHolder.tvOrderAddress.setText(model.getAddress());
+
+            viewHolder.setItemClickListener( new ItemClickListener() {
+                @Override
+                public void onClick(View view, int position, boolean isLongClick) {
+                    //...
+                }
+            } );
             }
         };
-
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 
-    private String convertCodeToStatus(String status)
-    {
-        if(status.equals("0"))
-            return "Placed";
-        else if (status.equals("1"))
-            return "On my way";
-        else
-            return "Shipped";
-    }
 
 
 }

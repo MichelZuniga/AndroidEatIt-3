@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.ayomide.androideatit.Common.Common;
 import com.example.ayomide.androideatit.Interface.ItemClickListener;
 import com.example.ayomide.androideatit.Model.Category;
+import com.example.ayomide.androideatit.Service.ListenOrder;
 import com.example.ayomide.androideatit.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,6 +100,9 @@ public class Home extends AppCompatActivity
 
         loadMenu();
 
+        //Register service
+        Intent service = new Intent(Home.this,ListenOrder.class);
+        startService(service);
     }
 
 
