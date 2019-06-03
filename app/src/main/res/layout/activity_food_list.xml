@@ -8,9 +8,11 @@
 
     <com.mancj.materialsearchbar.MaterialSearchBar
         android:id="@+id/searchBar"
+        app:mt_searchBarColor="#ECF0F1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
         app:mt_speechMode="false"
         app:mt_hint="Enter your food"/>
 

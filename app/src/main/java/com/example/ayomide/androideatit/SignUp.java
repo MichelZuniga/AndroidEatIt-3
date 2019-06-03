@@ -50,52 +50,49 @@ import java.util.HashMap;
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
-                mDialog.setMessage("Calm down...");
-                mDialog.show();
+                if(Common.isConnectedToTheInternet(getBaseContext())) {
+                    final ProgressDialog mDialog = new ProgressDialog( SignUp.this );
+                    mDialog.setMessage( "Calm down..." );
+                    mDialog.show();
 
-                final String phone = etPhone.getText().toString();
-                final String name = etName.getText().toString();
-                final String password = etPassword.getText().toString();
+                    final String phone = etPhone.getText().toString();
+                    final String name = etName.getText().toString();
+                    final String password = etPassword.getText().toString();
 
-                if(TextUtils.isEmpty(phone) || TextUtils.isEmpty(name) || TextUtils.isEmpty(password))
-                {
-                    Toast.makeText(SignUp.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                }
-                else if (password.length() < 6)
-                {
-                    Toast.makeText(SignUp.this, "Password must be at least 4 characters", Toast.LENGTH_SHORT).show();
+                    if (TextUtils.isEmpty( phone ) || TextUtils.isEmpty( name ) || TextUtils.isEmpty( password )) {
+                        Toast.makeText( SignUp.this, "All fields are required", Toast.LENGTH_SHORT ).show();
+                    } else if (password.length() < 6) {
+                        Toast.makeText( SignUp.this, "Password must be at least 4 characters", Toast.LENGTH_SHORT ).show();
+                    } else {
+                        mDialog.dismiss();
+                        table_user.addValueEventListener( new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                if (dataSnapshot.child( phone ).exists()) {
+                                    mDialog.dismiss();
+                                    Toast.makeText( SignUp.this, "this phone has been registered", Toast.LENGTH_SHORT ).show();
+                                } else {
+                                    User user = new User( name, password, phone );
+                                    table_user.child( phone ).setValue( user );
+                                    Intent homeIntent = new Intent( SignUp.this, Home.class );
+                                    Common.currentUser = user;
+                                    startActivity( homeIntent );
+                                    finish();
+                                    Toast.makeText( SignUp.this, "welcome o", Toast.LENGTH_LONG ).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
                 else
-                {
-                    mDialog.dismiss();
-                    table_user.addValueEventListener( new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            if (dataSnapshot.child(phone).exists())
-                            {
-                                mDialog.dismiss();
-                                Toast.makeText(SignUp.this, "this phone has been registered", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                User user = new User(name, password, phone);
-                                table_user.child(phone).setValue(user);
-                                Intent homeIntent = new Intent(SignUp.this, Home.class);
-                                Common.currentUser = user;
-                                startActivity(homeIntent);
-                                finish();
-                                Toast.makeText( SignUp.this, "welcome o", Toast.LENGTH_LONG ).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
+                    Toast.makeText(SignUp.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                    return;
             }
         });
     }

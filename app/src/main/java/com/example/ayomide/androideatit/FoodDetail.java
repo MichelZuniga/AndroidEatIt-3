@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.example.ayomide.androideatit.Common.Common;
 import com.example.ayomide.androideatit.Database.Database;
 import com.example.ayomide.androideatit.Model.Food;
 import com.example.ayomide.androideatit.Model.Order;
@@ -52,15 +53,19 @@ public class FoodDetail extends AppCompatActivity {
         fabCart.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Database(getBaseContext()).addToCart( new Order(
-                        foodId,
-                        currentFood.getName(),
-                        numberButton.getNumber(),
-                        currentFood.getPrice(),
-                        currentFood.getDiscount()
-                ));
+                if(Common.isConnectedToTheInternet(getBaseContext())) {
+                    new Database( getBaseContext() ).addToCart( new Order(
+                            foodId,
+                            currentFood.getName(),
+                            numberButton.getNumber(),
+                            currentFood.getPrice(),
+                            currentFood.getDiscount()
+                    ) );
 
-                Toast.makeText(FoodDetail.this, "added to cart", Toast.LENGTH_LONG).show();
+                    Toast.makeText( FoodDetail.this, "added to cart", Toast.LENGTH_LONG ).show();
+                }
+                else
+                   Toast.makeText(FoodDetail.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -76,7 +81,12 @@ public class FoodDetail extends AppCompatActivity {
             foodId = getIntent().getStringExtra("foodId");
         if(!foodId.isEmpty())
         {
-            getFoodDetails(foodId);
+            if(Common.isConnectedToTheInternet(getBaseContext()))
+                getFoodDetails(foodId);
+            else {
+                Toast.makeText(FoodDetail.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,7 +71,10 @@ public class Cart extends AppCompatActivity {
         btnPlaceOrder.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlertDialog();
+                if(cart.size() > 0)
+                    showAlertDialog();
+                else
+                    Toast.makeText(Cart.this, "Your cart is empty", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -134,6 +138,7 @@ public class Cart extends AppCompatActivity {
     {
         cart = new Database(this).getCarts();
         adapter = new CartAdapter(cart, this);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
 
         //calculate total price
@@ -144,5 +149,25 @@ public class Cart extends AppCompatActivity {
         NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
 
         price_total.setText(fmt.format(total));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        if(item.getTitle().equals(Common.DELETE))
+            deleteCart(item.getOrder());
+        return super.onContextItemSelected( item );
+    }
+
+    private void deleteCart(int order) {
+        //this will remove item at List<Order> by position
+        cart.remove(order);
+        //After that, al old data will be deleted from SQLite
+        new Database(this).cleanCart();
+        //Add final new data from List<Order> will be updated to SQLite
+        for(Order item: cart)
+            new Database(this).addToCart(item);
+        //Refresh
+        loadListFood();
     }
 }

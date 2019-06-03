@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.example.ayomide.androideatit.Cart;
+import com.example.ayomide.androideatit.Common.Common;
 import com.example.ayomide.androideatit.Interface.ItemClickListener;
 import com.example.ayomide.androideatit.Model.Order;
 import com.example.ayomide.androideatit.R;
@@ -22,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+class CartViewHolder extends RecyclerView.ViewHolder implements
+        View.OnClickListener,
+        View.OnCreateContextMenuListener{
 
     public TextView tvCartName, tvCartPrice;
     public ImageView cartCount;
@@ -39,11 +43,18 @@ class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickList
         tvCartName = itemView.findViewById(R.id.cart_item_name);
         tvCartPrice = itemView.findViewById(R.id.cart_item_price);
         cartCount = itemView.findViewById(R.id.cart_item_count);
+
+        itemView.setOnCreateContextMenuListener(this);
     }
 
     @Override
     public void onClick(View view) {
+    }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+        contextMenu.setHeaderTitle("Select the action");
+        contextMenu.add( 0,0,getAdapterPosition(),Common.DELETE );
     }
 }
 

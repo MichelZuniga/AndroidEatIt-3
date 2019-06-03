@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/background"
@@ -55,14 +56,27 @@
         android:orientation="horizontal"
         android:layout_below="@id/user_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="wrap_content">
+
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/cbRemember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="8dp"
+            android:text="Remember me"
+            android:gravity="center_vertical"
+            android:textColor="#fff"
+            app:cbd_strokeColor="#fff"
+            app:cbd_tickColor="@color/colorPrimaryDark"
+            />
 
         <TextView
             android:id="@+id/tvForgotPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forgot Password"
+            android:text="Forgot Password?"
             android:textColor="#fff"
             android:textSize="15sp"
             android:textStyle="bold"

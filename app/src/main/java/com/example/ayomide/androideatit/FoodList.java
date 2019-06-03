@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.ayomide.androideatit.Common.Common;
 import com.example.ayomide.androideatit.Interface.ItemClickListener;
 import com.example.ayomide.androideatit.Model.Food;
 import com.example.ayomide.androideatit.ViewHolder.FoodViewHolder;
@@ -58,7 +59,12 @@ public class FoodList extends AppCompatActivity {
             categoryId = getIntent().getStringExtra("CategoryId");
         if(!categoryId.isEmpty())
         {
-            loadListFood(categoryId);
+            if(Common.isConnectedToTheInternet(getBaseContext()))
+                loadListFood(categoryId);
+            else {
+                Toast.makeText(FoodList.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
 
