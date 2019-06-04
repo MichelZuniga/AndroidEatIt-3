@@ -34,7 +34,6 @@ public class SignIn extends AppCompatActivity {
     MaterialEditText etPhone, etPassword;
     Button btnSignIn;
     CheckBox cbRemember;
-
     DatabaseReference table_user;
 
     @Override
@@ -45,10 +44,10 @@ public class SignIn extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
-        //cbRemember = findViewById(R.id.cbRemember);
+        cbRemember = findViewById(R.id.cbRemember);
 
         //init Paper
-        //Paper.init(this);
+        Paper.init(this);
 
         //Init Firebase
         table_user = FirebaseDatabase.getInstance().getReference("User");
@@ -58,6 +57,12 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (Common.isConnectedToTheInternet(getBaseContext())) {
+                    //function to save user & password is checkbox is checked
+                    if(cbRemember.isChecked())
+                    {
+                        Paper.book().write( Common.USER_KEY, etPhone.getText().toString() );
+                        Paper.book().write( Common.PWD_KEY, etPassword.getText().toString() );
+                    }
 
                     final ProgressDialog mDialog = new ProgressDialog( SignIn.this );
                     mDialog.setMessage( "Calm down..." );

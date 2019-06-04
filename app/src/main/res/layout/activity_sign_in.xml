@@ -58,24 +58,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.rey.material.widget.CheckBox
+
+        <CheckBox
             android:id="@+id/cbRemember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Material.Drawable.CheckBox"
-            android:layout_marginRight="100dp"
+            android:layout_weight="2"
             android:layout_marginLeft="8dp"
+            android:buttonTint="#fff"
             android:text="Remember me"
-            android:gravity="center_vertical"
-            android:textColor="#fff"
-            app:cbd_strokeColor="#fff"
-            app:cbd_tickColor="@color/colorPrimaryDark"
-            />
+            android:textColor="#fff"/>
 
         <TextView
             android:id="@+id/tvForgotPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Forgot Password?"
             android:textColor="#fff"
             android:textSize="15sp"

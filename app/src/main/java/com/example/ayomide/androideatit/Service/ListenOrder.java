@@ -62,6 +62,7 @@ public class ListenOrder extends Service implements ChildEventListener {
     }
 
     private void showNotification(String key, Request request) {
+
         Intent intent=new Intent(getBaseContext(), OrderStatus.class);
         intent.putExtra("userPhone",request.getPhone()); //we need put user phone
         PendingIntent contentIntent=PendingIntent
