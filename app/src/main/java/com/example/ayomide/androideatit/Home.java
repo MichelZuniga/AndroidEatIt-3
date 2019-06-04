@@ -109,12 +109,10 @@ public class Home extends AppCompatActivity
                 return;
             }
 
-        //Register service
+        //Call service
         Intent service = new Intent(Home.this,ListenOrder.class);
         startService(service);
     }
-
-
 
     private void loadMenu() {
 
