@@ -2,6 +2,8 @@
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,13 +26,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.util.HashMap;
 
  public class SignUp extends AppCompatActivity {
 
      DatabaseReference table_user;
 
-     MaterialEditText etPhone, etName, etPassword;
+     String Security = "security code";
+
+     MaterialEditText etPhone, etName, etPassword, etSecurityCode;
      Button btnSignUp;
 
     @Override
@@ -41,6 +47,7 @@ import java.util.HashMap;
         etPhone = findViewById(R.id.etPhone);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
+        etSecurityCode = findViewById(R.id.etSecurityCode);
 
         btnSignUp = findViewById(R.id.btnSignUp);
 
@@ -58,28 +65,39 @@ import java.util.HashMap;
                     final String phone = etPhone.getText().toString();
                     final String name = etName.getText().toString();
                     final String password = etPassword.getText().toString();
+                    final String securityCode = etSecurityCode.getText().toString();
 
                     if (TextUtils.isEmpty( phone ) || TextUtils.isEmpty( name ) || TextUtils.isEmpty( password )) {
                         Toast.makeText( SignUp.this, "All fields are required", Toast.LENGTH_SHORT ).show();
-                    } else if (password.length() < 6) {
+                    } else if (password.length() < 4) {
                         Toast.makeText( SignUp.this, "Password must be at least 4 characters", Toast.LENGTH_SHORT ).show();
+                    } else if (securityCode.length() < 3) {
+                        Toast.makeText( SignUp.this, "Security code must be at least 3 characters", Toast.LENGTH_SHORT ).show();
                     } else {
                         mDialog.dismiss();
-                        table_user.addValueEventListener( new ValueEventListener() {
+                        table_user.addListenerForSingleValueEvent( new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                                 if (dataSnapshot.child( phone ).exists()) {
                                     mDialog.dismiss();
                                     Toast.makeText( SignUp.this, "this phone has been registered", Toast.LENGTH_SHORT ).show();
                                 } else {
-                                    User user = new User( name, password, phone );
+                                    User user = new User( name, password, phone, securityCode );
                                     table_user.child( phone ).setValue( user );
                                     Intent homeIntent = new Intent( SignUp.this, Home.class );
                                     Common.currentUser = user;
                                     startActivity( homeIntent );
                                     finish();
-                                    Toast.makeText( SignUp.this, "welcome o", Toast.LENGTH_LONG ).show();
+                                    final Toast toast = Toast.makeText( SignUp.this, "Please do not forget your "+Security.toUpperCase(),Toast.LENGTH_LONG );
+                                    toast.show();
+
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            toast.cancel();
+                                        }
+                                    }, 10000);
                                 }
                             }
 
@@ -87,7 +105,7 @@ import java.util.HashMap;
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
-                        });
+                        } );
                     }
                 }
                 else

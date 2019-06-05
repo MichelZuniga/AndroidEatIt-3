@@ -1,12 +1,15 @@
 package com.example.ayomide.androideatit;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -32,8 +35,10 @@ import io.paperdb.Paper;
 public class SignIn extends AppCompatActivity {
 
     MaterialEditText etPhone, etPassword;
+    TextView tvForgotPass;
     Button btnSignIn;
     CheckBox cbRemember;
+
     DatabaseReference table_user;
 
     @Override
@@ -43,6 +48,7 @@ public class SignIn extends AppCompatActivity {
 
         etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
+        tvForgotPass = findViewById(R.id.tvForgotPass);
         btnSignIn = findViewById(R.id.btnSignIn);
         cbRemember = findViewById(R.id.cbRemember);
 
@@ -114,5 +120,60 @@ public class SignIn extends AppCompatActivity {
                     return;
             }
         });
+
+        tvForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
+    }
+
+    private void showDialog()
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(SignIn.this);
+        builder.setTitle("Forgot Password");
+        builder.setMessage("Enter your security code");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View forgot_view = inflater.inflate(R.layout.forgot_password_layout, null);
+
+        builder.setView(forgot_view);
+        builder.setIcon(R.drawable.ic_security_black_24dp);
+
+        final MaterialEditText etPhone = forgot_view.findViewById(R.id.etPhone);
+        final MaterialEditText etSecurityCode = forgot_view.findViewById(R.id.etSecurityCode);
+
+        builder.setPositiveButton( "YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Check if user is available
+                table_user.addValueEventListener( new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.child(etPhone.getText().toString()).getValue(User.class);
+
+                        if(user.getSecurityCode().equals(etSecurityCode.getText().toString()))
+                            Toast.makeText(SignIn.this, "Your password is: "+user.getPassword(), Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(SignIn.this, "Wrong security code", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton( "NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
     }
 }

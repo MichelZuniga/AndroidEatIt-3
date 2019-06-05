@@ -44,7 +44,6 @@
             android:textSize="34sp"
             app:met_baseColor="#fff"
             app:met_floatingLabel="highlight"
-            app:met_minCharacters="4"
             app:met_primaryColor="#fff"
             app:met_singleLineEllipsis="true" />
 
@@ -56,12 +55,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <CheckBox
             android:id="@+id/cbRemember"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:layout_marginLeft="8dp"
             android:buttonTint="#fff"
             android:text="Remember me"
@@ -69,10 +67,10 @@
 
         <TextView
             android:id="@+id/tvForgotPass"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Forgot Password?"
+            android:text="@string/forgot_pwd"
             android:textColor="#fff"
             android:textSize="15sp"
             android:textStyle="bold"
