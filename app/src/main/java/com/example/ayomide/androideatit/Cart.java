@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -88,16 +90,14 @@ public class Cart extends AppCompatActivity {
         alertDialog.setTitle("One more step!");
         alertDialog.setMessage("Enter your home address: ");
 
-        final EditText edtAddress = new EditText(Cart.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-        );
+        LayoutInflater inflater = this.getLayoutInflater();
+        View order_address_comment = inflater.inflate( R.layout.order_address_comment , null);
 
-        edtAddress.setLayoutParams(lp);
-        alertDialog.setView(edtAddress); // add editText to alertDialog
+        final MaterialEditText edtAddress = order_address_comment.findViewById( R.id.etAddress );
+        final MaterialEditText edtComment = order_address_comment.findViewById( R.id.etComment );
+
+        alertDialog.setView(order_address_comment);
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
-
 
         alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
@@ -107,7 +107,9 @@ public class Cart extends AppCompatActivity {
                         Common.currentUser.getPhone(),
                         Common.currentUser.getName(),
                         edtAddress.getText().toString(),
+                        edtComment.getText().toString(),
                         price_total.getText().toString(),
+                        "0", //for satus
                         cart
                 );
 

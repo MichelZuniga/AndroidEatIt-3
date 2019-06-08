@@ -3,27 +3,20 @@ package com.example.ayomide.androideatit.Model;
 import java.util.List;
 
 public class Request {
-    private String phone, name, address, total, status;
+    private String phone, name, address, comment, total, status;
     private List<Order> foods; //list of food order
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String total, List<Order> foods) {
+    public Request(String phone, String name, String address, String comment, String total, String status, List<Order> foods) {
         this.phone = phone;
         this.name = name;
         this.address = address;
+        this.comment = comment;
         this.total = total;
-        this.foods = foods;
-        this.status = "0"; //Default is 0, 0: PLACED, 1: SHIPPING, 2:SHIPPED
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.foods = foods;
     }
 
     public String getPhone() {
@@ -50,12 +43,28 @@ public class Request {
         this.address = address;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public String getTotal() {
         return total;
     }
 
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<Order> getFoods() {
