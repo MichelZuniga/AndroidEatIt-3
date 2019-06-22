@@ -1,5 +1,7 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
+//apply plugin: 'com.github.dcendents.android-maven'
+//group = 'com.github.flutterwave'
 
 android {
     compileSdkVersion 28
@@ -33,6 +35,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:10.2.1'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -46,7 +49,9 @@ dependencies {
 
     implementation 'com.android.support:cardview-v7:26.+'
     implementation 'com.android.support:recyclerview-v7:26.+'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.5.0'
     implementation 'com.firebaseui:firebase-ui-database:1.2.0'
+
+    //implementation 'com.github.Flutterwave:rave-android:1.0.37'
 }
 apply plugin: 'com.google.gms.google-services'

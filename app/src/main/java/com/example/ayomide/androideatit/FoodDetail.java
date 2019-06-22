@@ -139,7 +139,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentFood = dataSnapshot.getValue(Food.class);
 
-                Picasso.with(getBaseContext()).load(currentFood.getImage()).into(food_image);//set Image
+                Picasso.with(getBaseContext()).load(currentFood.getImage()).into(food_image);
 
                 food_name.setText(currentFood.getName());
 
