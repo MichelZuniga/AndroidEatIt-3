@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,11 +22,9 @@ import com.example.ayomide.androideatit.Model.Notification;
 import com.example.ayomide.androideatit.Model.Order;
 import com.example.ayomide.androideatit.Model.Request;
 import com.example.ayomide.androideatit.Model.Sender;
-import com.example.ayomide.androideatit.Model.User;
+import com.example.ayomide.androideatit.Model.Token;
 import com.example.ayomide.androideatit.Remote.APIService;
 import com.example.ayomide.androideatit.ViewHolder.CartAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +35,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 

@@ -1,7 +1,7 @@
 package com.example.ayomide.androideatit.Service;
 
 import com.example.ayomide.androideatit.Common.Common;
-import com.example.ayomide.androideatit.Token;
+import com.example.ayomide.androideatit.Model.Token;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -16,7 +16,8 @@ public class MyFirebaseIdService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String tokenRefreshed = FirebaseInstanceId.getInstance().getToken();
-        updateTokenToFirebase(tokenRefreshed);
+        if (Common.currentUser != null)
+            updateTokenToFirebase(tokenRefreshed);
     }
 
     private void updateTokenToFirebase(String tokenRefreshed) {

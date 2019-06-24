@@ -1,4 +1,4 @@
-package com.example.ayomide.androideatit;
+package com.example.ayomide.androideatit.Model;
 
 public class Token {
     private String token;
