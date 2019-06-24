@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,9 +19,13 @@ import android.widget.Toast;
 
 import com.example.ayomide.androideatit.Common.Common;
 import com.example.ayomide.androideatit.Database.Database;
+import com.example.ayomide.androideatit.Model.MyResponse;
+import com.example.ayomide.androideatit.Model.Notification;
 import com.example.ayomide.androideatit.Model.Order;
 import com.example.ayomide.androideatit.Model.Request;
+import com.example.ayomide.androideatit.Model.Sender;
 import com.example.ayomide.androideatit.Model.User;
+import com.example.ayomide.androideatit.Remote.APIService;
 import com.example.ayomide.androideatit.ViewHolder.CartAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -36,6 +42,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Cart extends AppCompatActivity {
 
@@ -51,10 +61,15 @@ public class Cart extends AppCompatActivity {
 
     CartAdapter adapter;
 
+    APIService mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_cart );
+
+        //init Service
+        mService = Common.getFCMService();
 
         //init Firebase
         requests = FirebaseDatabase.getInstance().getReference("Requests");
@@ -115,13 +130,17 @@ public class Cart extends AppCompatActivity {
 
                 //Submit to Firebase
                 //Use System.CurrentMilli to key
-                requests.child(String.valueOf(System.currentTimeMillis()))
+                String order_number = String.valueOf( System.currentTimeMillis() );
+                requests.child(order_number)
                         .setValue(request);
+                
+                SendOrderNotification(order_number);
 
                 //Delete the cart
                 new Database(getBaseContext()).cleanCart();
-                Toast.makeText(Cart.this, "Thank you, Order placed", Toast.LENGTH_LONG).show();
-                finish();
+
+                //Toast.makeText(Cart.this, "Thank you, Order placed", Toast.LENGTH_LONG).show();
+                //finish();
             }
         });
 
@@ -133,6 +152,51 @@ public class Cart extends AppCompatActivity {
         });
 
         alertDialog.show();
+    }
+
+    //function to send message to server app when order is placed
+    private void SendOrderNotification(final String order_number) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+
+        final Query data = tokens.orderByChild( "serverToken" ).equalTo( true ); //get all node with serverToken is true
+
+        data.addValueEventListener( new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren())
+                {
+                    Token serverToken = postSnapshot.getValue(Token.class);
+
+                    //Create raw payload to send
+                    Notification notification = new Notification( "CHOW", "You have a new order:"+order_number );
+                    Sender content = new Sender(serverToken.getToken(),notification);
+                    mService.sendNotification( content )
+                            .enqueue( new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    if(response.body().success == 1) {
+                                        Toast.makeText( Cart.this, "Thank you, Order placed", Toast.LENGTH_SHORT ).show();
+                                        finish();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(Cart.this, "Failed !!!", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+                                    Log.e( "ERROR", t.getMessage() );
+                                }
+                            } );
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

@@ -24,6 +24,7 @@ import com.example.ayomide.androideatit.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import io.paperdb.Paper;
@@ -31,9 +32,8 @@ import io.paperdb.Paper;
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    DatabaseReference table_user, category;
-
+    FirebaseDatabase db;
+    DatabaseReference table_user, category, tokens;
 
     TextView tvFullName;
 
@@ -99,10 +99,19 @@ public class Home extends AppCompatActivity
                 return;
             }
 
+            updateToken(FirebaseInstanceId.getInstance().getToken() );
     }
 
-    private void loadMenu() {
+    private void updateToken(String token)
+    {
+        db = FirebaseDatabase.getInstance();
+        tokens = db.getReference("Tokens");
+        Token data = new Token( token, false ); //false because this token is sent from the client app
+        tokens.child( Common.currentUser.getPhone()).setValue( data );
+    } //to add token when you login
 
+    private void loadMenu()
+    {
         adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category.class, R.layout.menu_item, MenuViewHolder.class, category) {
             @Override
             protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {

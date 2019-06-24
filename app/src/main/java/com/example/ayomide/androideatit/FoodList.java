@@ -238,8 +238,6 @@ public class FoodList extends AppCompatActivity {
                         {
                             Food item = postSnapshot.getValue(Food.class);
                             suggestList.add(item.getName()); //Add name of food to suggest list
-
-
                         }
                     }
 

@@ -2,11 +2,11 @@ package com.example.ayomide.androideatit;
 
 public class Token {
     private String token;
-    private Boolean isServerToken;
+    private Boolean serverToken;
 
-    public Token(String token, Boolean isServerToken) {
+    public Token(String token, Boolean serverToken) {
         this.token = token;
-        this.isServerToken = isServerToken;
+        this.serverToken = serverToken;
     }
 
     public String getToken() {
@@ -18,10 +18,10 @@ public class Token {
     }
 
     public Boolean getServerToken() {
-        return isServerToken;
+        return serverToken;
     }
 
     public void setServerToken(Boolean serverToken) {
-        isServerToken = serverToken;
+        this.serverToken = serverToken;
     }
 }

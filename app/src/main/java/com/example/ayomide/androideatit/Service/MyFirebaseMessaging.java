@@ -42,7 +42,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 .setContentIntent( pendingIntent );
 
         NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-        int randomInt = new Random().nextInt(9999-1)+1;
-        notificationManager.notify(randomInt, builder.build());
+        notificationManager.notify(0, builder.build());
     }
 }
