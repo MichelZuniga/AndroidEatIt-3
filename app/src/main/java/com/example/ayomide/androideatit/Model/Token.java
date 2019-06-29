@@ -1,8 +1,8 @@
 package com.example.ayomide.androideatit.Model;
 
 public class Token {
-    private String token;
-    private Boolean serverToken;
+    public String token;
+    public Boolean serverToken;
 
     public Token() {
     }

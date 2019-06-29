@@ -63,13 +63,17 @@ public class OrderStatus extends AppCompatActivity {
                 public void onClick(View view, int position, boolean isLongClick) {
                     //...
                 }
-            } );
+            });
             }
         };
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
 
-
+        loadOrders( Common.currentUser.getPhone() );
+    }
 }
