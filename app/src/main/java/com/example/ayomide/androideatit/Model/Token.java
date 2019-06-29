@@ -4,6 +4,9 @@ public class Token {
     private String token;
     private Boolean serverToken;
 
+    public Token() {
+    }
+
     public Token(String token, Boolean serverToken) {
         this.token = token;
         this.serverToken = serverToken;
