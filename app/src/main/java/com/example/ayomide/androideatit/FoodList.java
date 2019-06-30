@@ -2,6 +2,7 @@ package com.example.ayomide.androideatit;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,6 +45,8 @@ public class FoodList extends AppCompatActivity {
 
     Database localDB;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,18 +62,45 @@ public class FoodList extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        //Get Intent here
-        if(getIntent() != null)
-            categoryId = getIntent().getStringExtra("CategoryId");
-        if(!categoryId.isEmpty())
-        {
-            if(Common.isConnectedToTheInternet(getBaseContext()))
-                loadListFood(categoryId);
-            else {
-                Toast.makeText(FoodList.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                return;
+        swipeRefreshLayout = findViewById( R.id.swipe_layout );
+        swipeRefreshLayout.setColorSchemeResources( R.color.colorPrimary,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_green_dark);
+        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(getIntent() != null)
+                    categoryId = getIntent().getStringExtra("CategoryId");
+                if(!categoryId.isEmpty())
+                {
+                    if(Common.isConnectedToTheInternet(getBaseContext()))
+                        loadListFood(categoryId);
+                    else {
+                        Toast.makeText(FoodList.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
             }
-        }
+        } );
+
+        swipeRefreshLayout.post( new Runnable() {
+            @Override
+            public void run() {
+                if(getIntent() != null)
+                    categoryId = getIntent().getStringExtra("CategoryId");
+                if(!categoryId.isEmpty())
+                {
+                    if(Common.isConnectedToTheInternet(getBaseContext()))
+                        loadListFood(categoryId);
+                    else {
+                        Toast.makeText(FoodList.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            }
+        } );
+
 
 
         //Search
@@ -189,6 +219,7 @@ public class FoodList extends AppCompatActivity {
             protected void populateViewHolder(final FoodViewHolder viewHolder, final Food model, final int position) {
 
                 viewHolder.food_name.setText(model.getName());
+                viewHolder.food_price.setText( String.format( "N %s", model.getPrice() ) );
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.food_image);
 
                 if (localDB.isFavorite( adapter.getRef( position ).getKey() ))
@@ -226,6 +257,7 @@ public class FoodList extends AppCompatActivity {
 
         //Set Adapter
         recyclerView.setAdapter(adapter);
+        swipeRefreshLayout.setRefreshing( false );
     }
 
 
