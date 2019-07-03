@@ -36,8 +36,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
-
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+
+    //Slider
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.daimajia.slider:library:1.1.5@aar'
 
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.3'
