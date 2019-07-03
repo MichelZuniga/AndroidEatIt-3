@@ -222,6 +222,21 @@ public class FoodList extends AppCompatActivity {
                 viewHolder.food_price.setText( String.format( "N %s", model.getPrice() ) );
                 Picasso.with(getBaseContext()).load(model.getImage()).into(viewHolder.food_image);
 
+                viewHolder.btn_share.setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String subject = "CHOW";
+                        String food = viewHolder.food_name.getText().toString();
+                        String text = "Checkout the amazing "+food+" in CHOW";
+                        Intent intent = new Intent();
+                        intent.setType( "message/rfc2822" ); //message/rfc2822 is a mime type for email messages
+                        intent.setAction(  Intent.ACTION_SEND  );
+                        intent.putExtra( Intent.EXTRA_SUBJECT, subject );
+                        intent.putExtra( Intent.EXTRA_TEXT, text );
+                        startActivity( intent );
+                    }
+                } );
+
                 if (localDB.isFavorite( adapter.getRef( position ).getKey() ))
                     viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
 
