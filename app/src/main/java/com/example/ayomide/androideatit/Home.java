@@ -3,6 +3,7 @@ package com.example.ayomide.androideatit;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,16 +22,27 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.example.ayomide.androideatit.Common.Common;
+import com.example.ayomide.androideatit.Database.Database;
 import com.example.ayomide.androideatit.Interface.ItemClickListener;
+import com.example.ayomide.androideatit.Model.Banner;
 import com.example.ayomide.androideatit.Model.Category;
 import com.example.ayomide.androideatit.Model.Token;
 import com.example.ayomide.androideatit.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 import io.paperdb.Paper;
 
@@ -38,7 +50,7 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FirebaseDatabase db;
-    DatabaseReference table_user, category, tokens;
+    DatabaseReference category, tokens;
 
     TextView tvFullName;
 
@@ -49,21 +61,27 @@ public class Home extends AppCompatActivity
 
     SwipeRefreshLayout swipeRefreshLayout;
 
+    HashMap<String, String> image_list;
+    SliderLayout mSlider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
 
         //init Firebase
-        table_user = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance();
         category = FirebaseDatabase.getInstance().getReference("Category");
 
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category.class, R.layout.menu_item, MenuViewHolder.class, category) {
+        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
+                Category.class,
+                R.layout.menu_item,
+                MenuViewHolder.class,
+                category) {
             @Override
             protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
 
@@ -156,7 +174,71 @@ public class Home extends AppCompatActivity
 
 
 
-        updateToken(FirebaseInstanceId.getInstance().getToken() );
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
+        //Setup Slider
+        //Need call this function after you initialize firebase database
+        setupSlider();
+    }
+
+    private void setupSlider()
+    {
+        mSlider = findViewById( R.id.slider );
+        image_list = new HashMap<>();
+
+        final DatabaseReference banners = db.getReference("Banner");
+        banners.addValueEventListener( new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                {
+                    Banner banner = postSnapshot.getValue(Banner.class);
+                    //We will connect string name and id like
+                    //PIZZA_01 => And we will use PIZZA to show description, 01 for food id to click
+                    image_list.put(banner.getName()+"_"+banner.getId(),banner.getImage());
+                }
+                for (String key:image_list.keySet())
+                {
+                    String[] keySplit = key.split( "_" );
+                    String nameOfFood = keySplit[0];
+                    String idOfFood = keySplit[1];
+
+                    //Create Slider
+                    final TextSliderView textSliderView = new TextSliderView( getBaseContext() );
+                    textSliderView
+                            .description( nameOfFood )
+                            .image( image_list.get( key ) )
+                            .setScaleType( BaseSliderView.ScaleType.Fit )
+                            .setOnSliderClickListener( new BaseSliderView.OnSliderClickListener() {
+                                @Override
+                                public void onSliderClick(BaseSliderView slider) {
+                                    Intent intent = new Intent( Home.this, FoodDetail.class );
+                                    //we will send food id to foodDetail
+                                    intent.putExtras( textSliderView.getBundle() ); 
+                                    startActivity( intent );
+                                }
+                            } );
+                    //Add extra bundle
+                    textSliderView.bundle( new Bundle());
+                    textSliderView.getBundle().putString("foodId", idOfFood);
+
+                    mSlider.addSlider( textSliderView );
+
+                    //Remove event once finished
+                    banners.removeEventListener( this );
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mSlider.setPresetTransformer( SliderLayout.Transformer.Background2Foreground );
+        mSlider.setPresetIndicator( SliderLayout.PresetIndicators.Center_Bottom );
+        mSlider.setCustomAnimation( new DescriptionAnimation() );
+        mSlider.setDuration( 4000 );
     }
 
     private void updateToken(String token)
@@ -176,6 +258,12 @@ public class Home extends AppCompatActivity
         //Animation
         recycler_menu.getAdapter().notifyDataSetChanged();
         recycler_menu.scheduleLayoutAnimation();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSlider.stopAutoCycle();
     }
 
     @Override
