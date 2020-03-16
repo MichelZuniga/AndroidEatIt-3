@@ -99,7 +99,7 @@ public class SignIn extends AppCompatActivity {
 
                         //check if user exists in database
                         if (dataSnapshot.child( etPhone.getText().toString() ).exists()) {
-                            //Get User info
+                            ///Get User info
                             mDialog.dismiss();
 
                             User user = dataSnapshot.child( etPhone.getText().toString() ).getValue( User.class );

@@ -137,7 +137,7 @@ public class Cart extends AppCompatActivity {
                 //Delete the cart
                 new Database(getBaseContext()).cleanCart();
 
-                //Toast.makeText(Cart.this, "Thank you, Order placed", Toast.LENGTH_LONG).show();
+                Toast.makeText(Cart.this, "Thank you, Order placed", Toast.LENGTH_LONG).show();
                 //finish();
             }
         });
